@@ -5,8 +5,7 @@ library(tidyverse)
 library(lubridate)
 
 # Load in the data 
-bike_data <- read.csv('/Users/marco/Documents/Brown/PHP 1560/Data/sample_bike.csv',
-               row.names = 1)
+bike_data <- read.csv("Data/sample_bike.csv", row.names = 1)
 
 ########################### Estimation Function ################################
 
