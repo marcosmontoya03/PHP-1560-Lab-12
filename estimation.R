@@ -5,7 +5,7 @@ library(tidyverse)
 library(lubridate)
 
 # Load in the data 
-data <- read.csv('/Users/marco/Documents/Brown/PHP 1560/Data/sample_bike.csv',
+bike_data <- read.csv('/Users/marco/Documents/Brown/PHP 1560/Data/sample_bike.csv',
                row.names = 1)
 
 ########################### Estimation Function ################################
@@ -14,7 +14,7 @@ data <- read.csv('/Users/marco/Documents/Brown/PHP 1560/Data/sample_bike.csv',
 #' 
 #' end 
 
-
+estimate_arrival_rates <- function(data) {
   
   # clean the data 
   data <- data %>% 
@@ -70,6 +70,9 @@ data <- read.csv('/Users/marco/Documents/Brown/PHP 1560/Data/sample_bike.csv',
   mu_hat <- x_hat %>%
     left_join(alpha_hat, by = c("start_station" = "station", "hour")) %>%
     mutate(mu_hat = ifelse(avg_avail > 0, avg_trips / avg_avail, NA))
+}
+
+arrival_rates <- estimate_arrival_rates(bike_data)
   
 
 
