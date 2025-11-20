@@ -12,3 +12,14 @@ model_1_day <- function(df){
 }
 
 return(model_1_day(df_rates))
+
+
+simulation <- function(df){
+  while(time < 24){
+    rexp(1, max(!is.na(df$mu_hat)))
+    
+  }
+  
+    
+    
+}
