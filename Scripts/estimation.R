@@ -9,9 +9,15 @@ bike_data <- read.csv("Data/sample_bike.csv", row.names = 1)
 
 ########################### Estimation Function ################################
 
-#' Estimating the 
+#' Estimating Arrival Rates for Bike Data
 #' 
-#' end 
+#' @description This function creates arrival rates for any bike data 
+#' 
+#' @param data data frame containing start_station, end_station, 
+#' start_time, and end_time
+#' 
+#' @return estimated unbiased arrival rates for each station pair and 
+#' hour combination 
 
 estimate_arrival_rates <- function(data) {
   data <- data %>%

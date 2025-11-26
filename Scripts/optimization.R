@@ -5,8 +5,9 @@ library(tidyverse)
 library(lubridate)
 
 source("estimation.R")
-source("modeling.R")
+source("simulation.R")
 
+######################## Optimization Function ################################
 
 
 #' Function to test the number of happy customers

@@ -1,14 +1,25 @@
-#Thinning Notes
-# only AB pair in example, need to repeat for each pair
-# - find max rate in the day for mu, make that lambda max
-# - arrival time iid exp(2) 
-# - keep adding exponential variables till end of the day. 
-# - then thin based on the mus
+############################### Simulation #####################################
 
+library(dplyr)
+library(tidyverse)
 
 source("estimation.R")
 
-simulation <- function(df, seed = 123){
+########################### Simulation Function ################################
+
+#' Simulating Bike Demand 
+#' 
+#' @description This function simulates a day of bike data using estimated 
+#' arrival rates from original bike_data 
+#' 
+#' @param arrival_rates estimated arrival rates using the estimate_arrival_rate
+#' function defined before 
+#' 
+#' @param seed sets a seed
+#' 
+#' @return simulated data for one day of bike demand 
+
+simulation <- function(arrival_rates, seed){
   
   set.seed(seed)
   
@@ -84,7 +95,4 @@ simulation <- function(df, seed = 123){
   return(all_demand)
 }
 
-
-
-
-tests <- simulation(arrival_rates)
+simulated_data <- simulation(arrival_rates, 123)
