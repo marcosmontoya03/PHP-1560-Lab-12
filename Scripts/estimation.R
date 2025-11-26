@@ -14,22 +14,22 @@ bike_data <- read.csv("Data/sample_bike.csv", row.names = 1)
 #' end 
 
 estimate_arrival_rates <- function(data) {
-  
-  # clean the data 
-  data <- data %>% 
-    filter(start_station != "R", end_station != "R") %>% 
-    mutate(start_time = ymd_hms(start_time),
-           end_time = ymd_hms(end_time),
-           hour = hour(start_time),
-           end_station = as.character(end_station)) 
+  data <- data %>%
+    mutate(
+      start_time = as.POSIXct(start_time, format = "%Y-%m-%d %H:%M:%S"),
+      end_time   = as.POSIXct(end_time,   format = "%Y-%m-%d %H:%M:%S")
+    )
   
   # compute the average number of trips per hour between each pair
-  x_hat <- data %>% 
-    group_by(start_station, end_station, hour) %>% 
+  x_hat <- data %>%
+    mutate(hour = hour(start_time)) %>%
+    filter(start_station != "R", end_station != "R") %>%
+    group_by(start_station, end_station, hour) %>%
     summarise(avg_trips = n() / n_distinct(as_date(start_time)), 
               .groups = "drop") 
   
   # pivot longer to get change in count 
+  data$end_station <- as.character(data$end_station)
   trips_long <- data %>%
     pivot_longer(cols = c("start_station", "start_time", 
                           "end_station", "end_time"),
@@ -69,6 +69,8 @@ estimate_arrival_rates <- function(data) {
   mu_hat <- x_hat %>%
     left_join(alpha_hat, by = c("start_station" = "station", "hour")) %>%
     mutate(mu_hat = ifelse(avg_avail > 0, avg_trips / avg_avail, NA))
+  
+  return(mu_hat)
 }
 
 arrival_rates <- estimate_arrival_rates(bike_data)
