@@ -7,18 +7,21 @@ library(lubridate)
 source("estimation.R")
 source("modeling.R")
 
-simulate_bikes(df_simulation)
+
 
 #' Function to test the number of happy customers
 #' 
 #' @param df_sim A data frame with time, starting station and ending station 
 #' @param placement A starting placement of the bikes, should be a dataframe of
 #' stations and the number of bikes in them
+#' @return A list containing the df_sim dataset, with an added mood column where 1 means the ride
+#' was fulfilled and 0 means that ride was not fulfilled, and the inputed placements
+#' 
 simulate_bikes <- function(df_sim, df_place){
   
   #Makes a empty placement of bikes if no placement is inputted
   if(is.null(df_place)){
-    df_place <- data.frame(station = seq(1,24,1), bikes = rep(0,24))
+    df_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
   }
   
   #Loops through the simulated trips dataframe, moving a bike if one is available,
@@ -28,47 +31,92 @@ simulate_bikes <- function(df_sim, df_place){
     end <- df_sim$end_station[i]
     
     
-    if(df_place[start]$num_bikes >= 1){
-      df_place[start]$num_bikes <-  df_place[start]$num_bikes - 1
-      df_place[end]$num_bikes <- df_place[end]$num_bikes + 1
-      df_sim[i]$feelings <- "happy"
+    if(df_place[df_place$station == start,]$num_bikes >= 1){
+      df_place[df_place$station == start,]$num_bikes <- 
+        df_place[df_place$station == start,]$num_bikes - 1
+      
+      df_place[df_place$station == end,]$num_bikes <- 
+        df_place[df_place$station == end,]$num_bikes + 1
+      
+      df_sim$mood[i] <- 1
     }
-    else{
-      df_sim[i]$feelings <- "unhappy"
+    else
+      {
+        df_sim$mood[i] <- 0
     }
   }
+  return(df_sim)
 }
 
-# A function to simulate several days, and using simulate_bikes each time
-# where an input is the number of days you want to simulate
+### Testing my simulation bike functions, seems to be working
+
+test_sim = data.frame(start_station = c(1,1,2,3),
+                      end_station = c(2,2,3,4),
+                      time = c(1,2,3,4))
+test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(1,24)))
+
+test_sim$start_station[1]
+test_sim[1]
+test_place[test_place$station == 23,]$num_bikes
+
+
+test_out <- simulate_bikes(test_sim,test_place)
 
 
 
 
+# 
 
-optimize <- function(num_bikes, df_rates){
-  start_place <- #Make this random
-  happy_score <- c()
+#' A function to optimize bike placements
+#' 
+#' @param df_rates A dataframe of each station and the expected rates
+#' @param tot_bikes The total number of allowed bikes 
+#' @param num_sims The total number of simulations run to measure rider happiness
+#' @return The optimal bike placements for the given rates.
+#' 
+optimze_placement <- function(df_rates, tot_bikes, num_sims){
+  
+
+  day_sim <- simulate_day(df_rates)
+  
+  #create a baseline empty bike placement
+  default_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
+  
+  for(i in 1:tot_bikes){
+  output_df <- simulate_bikes(day_sim, default_place)
     
-  for(i in 1:5){  
-  modeling_output <-  #See the other script for this function
+  #Finds the the unhappiest station unhappiness
+  most_unhappy_station <- output_df %>% 
+    group_by(start_station) %>% 
+    summarize(avg_happy = mean(mood)) %>% 
+    arrange(avg_happy) %>% 
+    slice(1) %>% 
+    pull(start_station)
   
-  #' Will take in the starting bike placement and compare it with the modeled bike
-  #' usage
-  happy_results <- happy_test(start_place, modeling_output)  
-  happy_score <- c(happy_score,mean(happy_results$happiness))
+  #Adds a bike to the unhappiest station
+  default_place[default_place$station == most_unhappy_station,]$num_bikes <- 
+    default_place[default_place$station == most_unhappy_station,]$num_bikes  + 1
   
-  #'Will take in a dataframe of each station pairing and how many bikes and how 
-  #'many happy people, and then will create a new placement
-  start_place <- adjust_place(happy_results)
+  #Run the simulation again, now with the new placement, and the same day_sim
   
-  #'Then we can loop through this an arbitrary number of times, and break out 
-  #'earlier if the happiness scores are not improving
-  if(i >= 2 & (abs(happy_score[i] - happy_score[i-1]) <= 0.05)
-    {
-       break
+  # Not sure where to implement running the simulate_day multiple time. Could
+  # run this within the for loop to find the unhappiest station for different
+  # days and then only add a bike to the average unhappiest station?
+      
   }
-  }
-  return(list[[happy_results, start_place]])
+  
+  return(default_place)
 }
+
+
+### Testing the optimize placement function
+most_unhappy_station <- test_out %>% 
+  group_by(start_station) %>% 
+  summarize(avg_happy = mean(mood)) %>% 
+  arrange(avg_happy) %>% 
+  slice(1) %>% 
+  pull(start_station)
+
+test_place[test_place$station == 13,]$num_bikes <- 
+  test_place[test_place$station == 13,]$num_bikes  + 1
 
