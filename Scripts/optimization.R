@@ -83,7 +83,15 @@ optimze_placement <- function(df_rates, tot_bikes, num_sims){
   default_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
   
   for(i in 1:tot_bikes){
-  output_df <- simulate_bikes(day_sim, default_place)
+    
+    # Will create a dataframe that appends several simulated days together with
+    # the added happiness measure
+    output_df = NULL
+    
+    for(j in 1:num_sims){
+      day_sim <- simulate_day(df_rates)
+       output_df <- rbind(output_df, simulate_bikes(day_sim, default_place))
+    }
     
   #Finds the the unhappiest station unhappiness
   most_unhappy_station <- output_df %>% 
@@ -97,12 +105,8 @@ optimze_placement <- function(df_rates, tot_bikes, num_sims){
   default_place[default_place$station == most_unhappy_station,]$num_bikes <- 
     default_place[default_place$station == most_unhappy_station,]$num_bikes  + 1
   
-  #Run the simulation again, now with the new placement, and the same day_sim
+  #Run the simulation again, now with the new placement
   
-  # Not sure where to implement running the simulate_day multiple time. Could
-  # run this within the for loop to find the unhappiest station for different
-  # days and then only add a bike to the average unhappiest station?
-      
   }
   
   return(default_place)
@@ -110,13 +114,21 @@ optimze_placement <- function(df_rates, tot_bikes, num_sims){
 
 
 ### Testing the optimize placement function
-most_unhappy_station <- test_out %>% 
-  group_by(start_station) %>% 
-  summarize(avg_happy = mean(mood)) %>% 
-  arrange(avg_happy) %>% 
-  slice(1) %>% 
-  pull(start_station)
+# most_unhappy_station <- test_out %>% 
+#   group_by(start_station) %>% 
+#   summarize(avg_happy = mean(mood)) %>% 
+#   arrange(avg_happy) %>% 
+#   slice(1) %>% 
+#   pull(start_station)
+# 
+# test_place[test_place$station == 13,]$num_bikes <- 
+#   test_place[test_place$station == 13,]$num_bikes  + 1
+# 
+# output_df = NULL
+# 
+# for(j in 1:10){
+#   day_sim <- simulate_day(df_rates)
+#   output_df <- rbind(output_df, test_out)
+# }
 
-test_place[test_place$station == 13,]$num_bikes <- 
-  test_place[test_place$station == 13,]$num_bikes  + 1
 
