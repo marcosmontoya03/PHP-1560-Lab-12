@@ -28,7 +28,7 @@ simulate_bikes <- function(df_sim, df_place){
   
   #Loops through the simulated trips dataframe, moving a bike if one is available,
   # and creating a happiness output
-  for(i in 1:length(df_sim)){
+  for(i in 1:nrow(df_sim)){
     start <- df_sim$start_station[i]
     end <- df_sim$end_station[i]
     
@@ -47,7 +47,7 @@ simulate_bikes <- function(df_sim, df_place){
         df_sim$mood[i] <- 0
     }
   }
-  return(df_sim)
+  return(list(df_sim, df_place))
 }
 
 
@@ -55,6 +55,7 @@ simulate_bikes <- function(df_sim, df_place){
 ### Testing my simulation bike functions, seems to be working
 
 ## Unit Test for simulate_bikes
+
 test_sim = data.frame(start_station = c(1,1,2,3),
                       end_station = c(2,2,3,4),
                       time = c(1,2,3,4))
@@ -62,7 +63,7 @@ test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(1,24)))
 
 test_out <- simulate_bikes(test_sim,test_place)
 
-testthat::expect_equal(mean(test_out$mood),0.75)
+testthat::expect_equal(mean(test_out[[1]]$mood),0.75)
 
 ## Another Unit Test for simulate_bikes
 test_sim = data.frame(start_station = c(1,1,2,3),
@@ -71,8 +72,24 @@ test_sim = data.frame(start_station = c(1,1,2,3),
 test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(0,24)))
 test_out <- simulate_bikes(test_sim,test_place)
 
-testthat::expect_equal(mean(test_out$mood),0)
+testthat::expect_equal(mean(test_out[[1]]$mood),0)
 
+## Another Unit test for simulate Bikes
+test_sim = data.frame(start_station = c(2,2,2,1,1,1), 
+                      end_station = c(4,4,4,5,5,5),
+                      hour = c(1,1.1,1.2,1.3,1.4,1.5))
+test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(1,24)))
+
+
+
+c(1:nrow(test_sim))
+
+test_out <- simulate_bikes(test_sim, test_place)
+
+testthat::expect_equal(sum(test_out[[2]]$num_bikes),24)
+
+# test_sim$mood[4] <- 1
+# test_sim
 
 
 # 
