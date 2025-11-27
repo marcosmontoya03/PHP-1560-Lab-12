@@ -3,6 +3,7 @@
 library(dplyr)
 library(tidyverse)
 library(lubridate)
+library(testthat)
 
 source("estimation.R")
 source("simulation.R")
@@ -51,18 +52,24 @@ simulate_bikes <- function(df_sim, df_place){
 
 ### Testing my simulation bike functions, seems to be working
 
+## Unit Test for simulate_bikes
 test_sim = data.frame(start_station = c(1,1,2,3),
                       end_station = c(2,2,3,4),
                       time = c(1,2,3,4))
 test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(1,24)))
 
-test_sim$start_station[1]
-test_sim[1]
-test_place[test_place$station == 23,]$num_bikes
-
-
 test_out <- simulate_bikes(test_sim,test_place)
 
+testthat::expect_equal(mean(test_out$mood),0.75)
+
+## Another Unit Test for simulate_bikes
+test_sim = data.frame(start_station = c(1,1,2,3),
+                      end_station = c(2,2,3,4),
+                      time = c(1,2,3,4))
+test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(0,24)))
+test_out <- simulate_bikes(test_sim,test_place)
+
+testthat::expect_equal(mean(test_out$mood),0)
 
 
 
@@ -75,11 +82,18 @@ test_out <- simulate_bikes(test_sim,test_place)
 #' @param num_sims The total number of simulations run to measure rider happiness
 #' @return The optimal bike placements for the given rates.
 #' 
-optimze_placement <- function(df_rates, tot_bikes, num_sims){
+optimze_placement <- function(df_rates, 
+                              tot_bikes, 
+                              num_sims, 
+                              testing = F, 
+                              day_sim_test){
   
-
+  if(testing == F){
   day_sim <- simulate_day(df_rates)
-  
+  }
+  else{
+    day_sim <- day_sim_test
+  }
   #create a baseline empty bike placement
   default_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
   
@@ -90,8 +104,13 @@ optimze_placement <- function(df_rates, tot_bikes, num_sims){
     output_df = NULL
     
     for(j in 1:num_sims){
+      if(testing == F){
       day_sim <- simulate_day(df_rates)
-       output_df <- rbind(output_df, simulate_bikes(day_sim, default_place))
+      } else {
+        day_sim <- day_sim_test
+      } 
+      
+      output_df <- rbind(output_df, simulate_bikes(day_sim, default_place))
     }
     
   #Finds the the unhappiest station unhappiness
@@ -110,11 +129,17 @@ optimze_placement <- function(df_rates, tot_bikes, num_sims){
   
   }
   
-  return(default_place)
+  return(list(default_place,output_df))
 }
 
 
 ### Testing the optimize placement function
+
+## Unit Testing for the 
+
+
+## Misc Testing
+
 # most_unhappy_station <- test_out %>% 
 #   group_by(start_station) %>% 
 #   summarize(avg_happy = mean(mood)) %>% 
