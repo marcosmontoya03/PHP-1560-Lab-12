@@ -44,6 +44,7 @@ simulation <- function(arrival_rates, seed){
     # set up for while loop 
     arrivals <- c()
     current_time <- 0
+   
     rate <- max(pair_data$mu_hat, na.rm = TRUE) 
     next_arrival <- rexp(1, rate)
     
@@ -65,8 +66,10 @@ simulation <- function(arrival_rates, seed){
       if(nrow(hour_data) == 0){
         p_thin <- 0
       } else {
-        
         # thinning probability = mu_hat / max(mu_hat in this hour subset)
+        if(rate == 0){
+          stop("Rate is equal to Zero")
+        }
         p_thin <- hour_data$mu_hat / max(hour_data$mu_hat, na.rm = TRUE)
       }
       
@@ -85,7 +88,7 @@ simulation <- function(arrival_rates, seed){
       demand <- data.frame(
         start_station = s,
         end_station = e,
-        hour = floor(arrivals)
+        hour = arrivals
       )
       all_demand <- rbind(all_demand, demand)
     }
