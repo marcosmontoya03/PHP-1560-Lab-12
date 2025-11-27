@@ -99,7 +99,9 @@ testthat::expect_equal(sum(test_out[[2]]$num_bikes),24)
 #' @param df_rates A dataframe of each station and the expected rates
 #' @param tot_bikes The total number of allowed bikes 
 #' @param num_sims The total number of simulations run to measure rider happiness
-#' @return The optimal bike placements for the given rates.
+#' @return A list containing The optimal bike placements for the given rates,
+#' the outputed happiness list for testing purposes, and the list of unhappiest
+#' stations for testing purposes
 #' 
 optimize_placement <- function(df_rates, 
                               tot_bikes, 
@@ -132,13 +134,13 @@ optimize_placement <- function(df_rates,
         day_sim <- day_sim_test
       } 
       
-      output_df <- rbind(output_df, simulate_bikes(day_sim, default_place))
+      output_df <- rbind(output_df, simulate_bikes(day_sim, default_place)[[1]])
     }
     
   #Finds the the unhappiest station unhappiness
   most_unhappy_station <- output_df %>% 
     group_by(start_station,hour) %>% 
-    summarize(avg_happy = mean(mood)) %>% 
+    summarize(avg_happy = mean(mood), .groups = "drop") %>% 
     arrange(avg_happy,hour) %>% 
     ungroup() %>% 
     slice(1) %>% 
@@ -164,14 +166,19 @@ optimize_placement <- function(df_rates,
 
 # day_1 <- simulate(df_rates)
 
-test_day_sim <- data.frame(start_station = c(2,2,2,1,1,1), 
-                           end_station = c(4,4,4,5,5,5),
+test_day_sim <- data.frame(start_station = c(2,6,2,1,3,7), 
+                           end_station = c(6,10,10,6,5,5),
                            hour = c(1,1.1,1.2,1.3,1.4,1.5))
-optimize_placement(df_rates = arrival_rates,
+test_out <- optimize_placement(df_rates = arrival_rates,
                    tot_bikes = 5,
-                   num_sims = 1,
+                   num_sims = 3,
                    testing = T,
                    day_sim_test = test_day_sim)
+
+testthat::expect_equal(length(test_out[[3]]),5)
+testthat::expect_equal(sum(test_out[[1]]$num_bikes),5)
+testthat::expect_equal(test_out[[3]],c(2,2,1,3,7))
+
 
 
 ## Misc Testing
