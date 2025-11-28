@@ -19,9 +19,11 @@ source("Scripts/estimation.R")
 #' 
 #' @return simulated data for one day of bike demand 
 
-simulated_demand <- function(arrival_rates, seed){
+simulated_demand <- function(arrival_rates, seed = NULL){
   
-  set.seed(seed)
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
   
   all_demand <- data.frame()
   
@@ -104,7 +106,12 @@ simulated_demand <- function(arrival_rates, seed){
   return(all_demand)
 }
 
-simulated_data <- simulated_demand(arrival_rates, 13)
+simulated_data <- simulated_demand(arrival_rates)
+
+
+
+
+
 
 ########################## simulating successful trips #########################
 
