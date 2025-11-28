@@ -74,13 +74,13 @@ simulation <- function(arrival_rates, seed){
       }
       
       # thinning step
-      keep <- rbinom(1, 1, prob = p_thin)  # size=1 → one trial
+      keep <- rbinom(1, 1, prob = p_thin)  # size=1 for one trial
       
       if(keep == 1){
         arrivals <- c(arrivals, current_time)
       }
       
-      # next interarrival
+      # next arrival (reset)
       next_arrival <- rexp(1, rate)
     }
     
@@ -88,7 +88,7 @@ simulation <- function(arrival_rates, seed){
       demand <- data.frame(
         start_station = s,
         end_station = e,
-        hour = arrivals
+        hour = floor(arrivals)
       )
       all_demand <- rbind(all_demand, demand)
     }
@@ -98,4 +98,4 @@ simulation <- function(arrival_rates, seed){
   return(all_demand)
 }
 
-simulated_data <- simulation(arrival_rates, 123)
+simulated_data <- simulation(arrival_rates, 13)

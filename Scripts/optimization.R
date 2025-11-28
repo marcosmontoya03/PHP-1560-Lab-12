@@ -6,20 +6,20 @@ library(lubridate)
 library(testthat)
 
 source("Scripts/estimation.R")
-# source("Scripts/simulation.R")
+source("Scripts/simulation.R")
 
 ######################## Optimization Function ################################
 
 
 #' Function to test the number of happy customers
 #' 
-#' @param df_sim A data frame with time, starting station and ending station 
+#' @param simulated_data A data frame with time, starting station and ending station 
 #' @param placement A starting placement of the bikes, should be a dataframe of
 #' stations and the number of bikes in them
-#' @return A list containing the df_sim dataset, with an added mood column where 1 means the ride
+#' @return A list containing the simulated_data dataset, with an added mood column where 1 means the ride
 #' was fulfilled and 0 means that ride was not fulfilled, and the inputed placements
 #' 
-simulate_bikes <- function(df_sim, df_place){
+simulate_bikes <- function(simulated_data, df_place = NULL){
   
   #Makes a empty placement of bikes if no placement is inputted
   if(is.null(df_place)){
@@ -28,9 +28,9 @@ simulate_bikes <- function(df_sim, df_place){
   
   #Loops through the simulated trips dataframe, moving a bike if one is available,
   # and creating a happiness output
-  for(i in 1:nrow(df_sim)){
-    start <- df_sim$start_station[i]
-    end <- df_sim$end_station[i]
+  for(i in 1:nrow(simulated_data)){
+    start <- simulated_data$start_station[i]
+    end <- simulated_data$end_station[i]
     
     
     if(df_place[df_place$station == start,]$num_bikes >= 1){
@@ -40,15 +40,17 @@ simulate_bikes <- function(df_sim, df_place){
       df_place[df_place$station == end,]$num_bikes <- 
         df_place[df_place$station == end,]$num_bikes + 1
       
-      df_sim$mood[i] <- 1
+      simulated_data$mood[i] <- 1
     }
     else
       {
-        df_sim$mood[i] <- 0
+        simulated_data$mood[i] <- 0
     }
   }
-  return(list(df_sim, df_place))
+  return(list(simulated_data, df_place))
 }
+
+simulate_bikes <- simulate_bikes(simulated_data)
 
 
 
