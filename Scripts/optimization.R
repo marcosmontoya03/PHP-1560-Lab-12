@@ -10,92 +10,6 @@ source("Scripts/simulation.R")
 
 ######################## Optimization Function ################################
 
-
-#' Function to test the number of happy customers
-#' 
-#' @param simulated_data A data frame with time, starting station and ending station 
-#' @param placement A starting placement of the bikes, should be a dataframe of
-#' stations and the number of bikes in them
-#' @return A list containing the simulated_data dataset, with an added mood column where 1 means the ride
-#' was fulfilled and 0 means that ride was not fulfilled, and the inputed placements
-#' 
-simulate_bikes <- function(simulated_data, df_place = NULL){
-  
-  #Makes a empty placement of bikes if no placement is inputted
-  if(is.null(df_place)){
-    df_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
-  }
-  
-  #Loops through the simulated trips dataframe, moving a bike if one is available,
-  # and creating a happiness output
-  for(i in 1:nrow(simulated_data)){
-    start <- simulated_data$start_station[i]
-    end <- simulated_data$end_station[i]
-    
-    
-    if(df_place[df_place$station == start,]$num_bikes >= 1){
-      df_place[df_place$station == start,]$num_bikes <- 
-        df_place[df_place$station == start,]$num_bikes - 1
-      
-      df_place[df_place$station == end,]$num_bikes <- 
-        df_place[df_place$station == end,]$num_bikes + 1
-      
-      simulated_data$mood[i] <- 1
-    }
-    else
-      {
-        simulated_data$mood[i] <- 0
-    }
-  }
-  return(list(simulated_data, df_place))
-}
-
-simulate_bikes <- simulate_bikes(simulated_data)
-
-
-
-### Testing my simulation bike functions, seems to be working
-
-## Unit Test for simulate_bikes
-
-test_sim = data.frame(start_station = c(1,1,2,3),
-                      end_station = c(2,2,3,4),
-                      time = c(1,2,3,4))
-test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(1,24)))
-
-test_out <- simulate_bikes(test_sim,test_place)
-
-testthat::expect_equal(mean(test_out[[1]]$mood),0.75)
-
-## Another Unit Test for simulate_bikes
-test_sim = data.frame(start_station = c(1,1,2,3),
-                      end_station = c(2,2,3,4),
-                      time = c(1,2,3,4))
-test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(0,24)))
-test_out <- simulate_bikes(test_sim,test_place)
-
-testthat::expect_equal(mean(test_out[[1]]$mood),0)
-
-## Another Unit test for simulate Bikes
-test_sim = data.frame(start_station = c(2,2,2,1,1,1), 
-                      end_station = c(4,4,4,5,5,5),
-                      hour = c(1,1.1,1.2,1.3,1.4,1.5))
-test_place = data.frame(station = seq(1,24,1), num_bikes = c(rep(1,24)))
-
-
-
-c(1:nrow(test_sim))
-
-test_out <- simulate_bikes(test_sim, test_place)
-
-testthat::expect_equal(sum(test_out[[2]]$num_bikes),24)
-
-# test_sim$mood[4] <- 1
-# test_sim
-
-
-# 
-
 #' A function to optimize bike placements
 #' 
 #' @param df_rates A dataframe of each station and the expected rates
@@ -160,6 +74,8 @@ optimize_placement <- function(df_rates,
   
   return(list(default_place,output_df,vec_most_unhappy))
 }
+
+
 
 
 ### Testing the optimize placement function

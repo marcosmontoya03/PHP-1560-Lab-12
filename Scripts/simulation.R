@@ -19,7 +19,7 @@ source("Scripts/estimation.R")
 #' 
 #' @return simulated data for one day of bike demand 
 
-simulation <- function(arrival_rates, seed){
+simulated_demand <- function(arrival_rates, seed){
   
   set.seed(seed)
   
@@ -46,6 +46,12 @@ simulation <- function(arrival_rates, seed){
     current_time <- 0
    
     rate <- max(pair_data$mu_hat, na.rm = TRUE) 
+    
+    # check for all NA rows
+    if(!is.finite(rate) || rate <= 0){
+      next 
+    }
+    
     next_arrival <- rexp(1, rate)
     
     # while loop for 24 hour day 
@@ -98,4 +104,57 @@ simulation <- function(arrival_rates, seed){
   return(all_demand)
 }
 
-simulated_data <- simulation(arrival_rates, 13)
+simulated_data <- simulated_demand(arrival_rates, 13)
+
+########################## simulating successful trips #########################
+
+
+#' Function to test the number of happy customers
+#' 
+#' @param simulated_data A simulated data frame with time, starting station, and ending station 
+#' @param df_place A starting placement of the bikes, should be a dataframe of
+#' stations and the number of bikes in them
+#' @return A list containing the simulated_data dataset, with an added mood column where 1 means the ride
+#' was fulfilled and 0 means that ride was not fulfilled, and the inputed placements
+#' 
+happy_customers <- function(simulated_data, df_place = NULL){
+  
+  #Makes a empty placement of bikes if no placement is inputted
+  if(is.null(df_place)){
+    df_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
+  }
+  
+  #Loops through the simulated trips dataframe, moving a bike if one is available,
+  # and creating a happiness output
+  for(i in 1:nrow(simulated_data)){
+    start <- simulated_data$start_station[i]
+    end <- simulated_data$end_station[i]
+    
+    
+    if(df_place[df_place$station == start,]$num_bikes >= 1){
+      df_place[df_place$station == start,]$num_bikes <- 
+        df_place[df_place$station == start,]$num_bikes - 1
+      
+      df_place[df_place$station == end,]$num_bikes <- 
+        df_place[df_place$station == end,]$num_bikes + 1
+      
+      simulated_data$mood[i] <- 1
+    }
+    else
+    {
+      simulated_data$mood[i] <- 0
+    }
+  }
+  return(list(simulated_data, df_place))
+}
+
+simulated_trips <- happy_customers(simulated_data)
+
+
+
+
+
+
+
+
+
