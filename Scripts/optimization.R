@@ -23,11 +23,12 @@ optimize_placement <- function(arrival_rates,
                               tot_bikes, 
                               num_sims, 
                               testing = F, 
-                              day_sim_test){
+                              day_sim_test,
+                              seed = NULL){
   
   #Adds functionality to input your own simulated day
   if(testing == F){
-  day_sim <- simulated_demand(arrival_rates)
+  day_sim <- simulated_demand(arrival_rates, seed)
   }
   else{
     day_sim <- day_sim_test
@@ -45,7 +46,7 @@ optimize_placement <- function(arrival_rates,
     
     for(j in 1:num_sims){
       if(testing == F){
-      day_sim <- simulated_demand(arrival_rates)
+      day_sim <- simulated_demand(arrival_rates, seed)
       } else {
         day_sim <- day_sim_test
       } 
@@ -75,6 +76,7 @@ optimize_placement <- function(arrival_rates,
   return(list(default_place, output_df, vec_most_unhappy))
 }
 
+final_optimization <- optimize_placement(arrival_rates, 10, 1)
 
 
 final_optimization <- optimize_placement(arrival_rates, 100, 3)
