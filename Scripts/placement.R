@@ -81,5 +81,3 @@ optimize_placement <- function(arrival_rates,
 
 final_optimization <- optimize_placement(arrival_rates, 20, 2)
 
-final_rec(final_optimization)
-

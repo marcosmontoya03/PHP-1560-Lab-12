@@ -43,17 +43,23 @@ final_rec <- function(final_optimization){
 # 20 bikes 
 final_optimization_20 <- optimize_placement(arrival_rates, 20, 2, seed = 123)
 
-final_rec(final_optimization_20)
+gt_20 <- final_rec(final_optimization_20)
+
+gtsave(gt_20, "results/final_rec_20_bikes.png")
 
 # 50 bikes 
 final_optimization_50 <- optimize_placement(arrival_rates, 50, 2, seed = 123)
 
-final_rec(final_optimization_50)
+gt_50 <- final_rec(final_optimization_50)
+
+gtsave(gt_50, "results/final_rec_50_bikes.png")
 
 # 200 bikes 
 
 final_optimization_200 <- optimize_placement(arrival_rates, 200, 2, seed = 123)
 
-final_rec(final_optimization_200)
+gt_200 <- final_rec(final_optimization_200)
+
+gtsave(gt_200, "results/final_rec_200_bikes.png")
 
 
