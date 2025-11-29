@@ -119,9 +119,10 @@ simulated_data <- simulated_demand(arrival_rates)
 #' @param simulated_data A simulated data frame with time, starting station, and ending station 
 #' @param df_place A starting placement of the bikes, should be a dataframe of
 #' stations and the number of bikes in them
+#' 
 #' @return A list containing the simulated_data dataset, with an added mood column where 1 means the ride
 #' was fulfilled and 0 means that ride was not fulfilled, and the inputed placements
-#' 
+
 happy_customers <- function(simulated_data, df_place = NULL){
   
   #Makes a empty placement of bikes if no placement is inputted

@@ -10,6 +10,18 @@ source("Scripts/placement.R")
 
 ############################### Output Function ################################
 
+#' Final Output Table 
+#' 
+#' @description This functions takes the optimization output and formats it in 
+#' a legible table for key placement of bikes
+#' 
+#' @param final_optimization this is the output from the `optimize_placement()` 
+#' function  
+#' 
+#' @return a gt table with fleet size, stations, and number of bikes to be placed
+#' at beginning of day
+
+
 final_rec <- function(final_optimization){
   
   final_rec <- final_optimization[[1]] %>% 

@@ -32,17 +32,23 @@ output provided in each script. Specifically, use this order:
 4.  Run `final_rec()` to get a nice table of where to place bikes at the
     beginning of the day.
 
-# FUNCTION OVERVIEW
+# SCRIPT OVERVIEW
 
-1.  `estimate_arrival_rates()` estimates how many trips will occur per
-    hour in each pair of stations
-2.  `simulate_demand()` simulates bike demand on a given day
-3.  `happy_customers()` calculates the number of trips demanded that
-    were successful (i.e. trip could take place)
-4.  `optimize_placement()` loops through various starting assortments
-    and calculates the optimal bike placement
-5.  `final_rec()` creates a table the displays the final recommendations
-    for bike placement
+1.  `estimation.R`
+    1.  `estimate_arrival_rates()` estimates how many trips will occur
+        per hour in each pair of stations
+2.  `simulation.R`
+    1.  `simulate_demand()` simulates bike demand on a given day
+    2.  `happy_customers()` calculates the number of trips demanded that
+        were successful (i.e. trip could take place)
+3.  `placement.R`
+    1.  `optimize_placement()` loops through various starting
+        assortments and calculates the optimal bike placement
+4.  `utils.R`
+    1.  `final_rec()` creates a table the displays the final
+        recommendations for bike placement
+5.  `tests_testthat.R`
+    1.  Test for each function
 
 # OUTPUT
 

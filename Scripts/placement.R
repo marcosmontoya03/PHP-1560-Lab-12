@@ -15,6 +15,7 @@ source("Scripts/simulation.R")
 #' @param arrival_rates A dataframe of each station and the estimated arrival rates
 #' @param tot_bikes Number of bikes in fleet 
 #' @param num_sims The total number of simulations run to measure rider happiness
+#'
 #' @return A list containing the optimal bike placements for the given rates,
 #' the outputed happiness list for testing purposes, and the list of unhappiest
 #' stations for testing purposes
@@ -75,7 +76,7 @@ optimize_placement <- function(arrival_rates,
   }
   
   return(list(optimized_placement = default_place, succesful_trips = output_df, 
-              unhappiest_stations = vec_most_unhappy, number_sims = num_sims))
+              unhappiest_stations = vec_most_unhappy))
 }
 
 final_optimization <- optimize_placement(arrival_rates, 20, 2)
