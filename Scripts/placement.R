@@ -15,10 +15,10 @@ source("Scripts/simulation.R")
 #' @param arrival_rates A dataframe of each station and the estimated arrival rates
 #' @param tot_bikes Number of bikes in fleet 
 #' @param num_sims The total number of simulations run to measure rider happiness
-#' @return A list containing The optimal bike placements for the given rates,
+#' @return A list containing the optimal bike placements for the given rates,
 #' the outputed happiness list for testing purposes, and the list of unhappiest
 #' stations for testing purposes
-#' 
+
 optimize_placement <- function(arrival_rates, 
                               tot_bikes, 
                               num_sims, 
@@ -35,7 +35,7 @@ optimize_placement <- function(arrival_rates,
   }
   
   #create a baseline empty bike placement
-  default_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
+  default_place <- data.frame(station = seq(1, 24, 1), num_bikes = rep(0, 24))
   vec_most_unhappy <- c()
   
   for(i in 1:tot_bikes){

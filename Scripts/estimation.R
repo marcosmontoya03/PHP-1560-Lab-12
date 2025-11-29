@@ -1,11 +1,8 @@
-############################### Estimation #####################################
+############################### ESTIMATION #####################################
 
 library(dplyr)
 library(tidyverse)
 library(lubridate)
-
-# Load in the data 
-bike_data <- read.csv("Data/sample_bike.csv", row.names = 1)
 
 ########################### Estimation Function ################################
 
@@ -79,7 +76,12 @@ estimate_arrival_rates <- function(data) {
   return(mu_hat)
 }
 
+
+################################### RESULTS ####################################
+
+# Load in the data 
+bike_data <- read.csv("Data/sample_bike.csv", row.names = 1)
+
+# Estimate arrival rates
 arrival_rates <- estimate_arrival_rates(bike_data)
   
-
-

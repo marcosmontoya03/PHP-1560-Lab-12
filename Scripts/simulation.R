@@ -43,16 +43,17 @@ simulated_demand <- function(arrival_rates, seed = NULL){
     # skip if no data for this pair at all
     if(nrow(pair_data) == 0) next
     
-    # set up for while loop 
+    # set up while loop 
     arrivals <- c()
     current_time <- 0
-   
-    rate <- max(pair_data$mu_hat, na.rm = TRUE) 
     
-    # check for all NA rows
-    if(!is.finite(rate) || rate <= 0){
-      next 
+    # skip if all mu_hat are NA
+    if(all(is.na(pair_data$mu_hat))){
+      next
     }
+    
+    # calculate rate 
+    rate <- max(pair_data$mu_hat, na.rm = TRUE) 
     
     next_arrival <- rexp(1, rate)
     
@@ -78,7 +79,7 @@ simulated_demand <- function(arrival_rates, seed = NULL){
         if(rate == 0){
           stop("Rate is equal to Zero")
         }
-        p_thin <- hour_data$mu_hat / max(hour_data$mu_hat, na.rm = TRUE)
+        p_thin <- hour_data$mu_hat / rate
       }
       
       # thinning step
@@ -110,10 +111,7 @@ simulated_data <- simulated_demand(arrival_rates)
 
 
 
-
-
-
-########################## simulating successful trips #########################
+############################## successful trips ###############################
 
 
 #' Function to test the number of happy customers
@@ -128,7 +126,7 @@ happy_customers <- function(simulated_data, df_place = NULL){
   
   #Makes a empty placement of bikes if no placement is inputted
   if(is.null(df_place)){
-    df_place <- data.frame(station = seq(1,24,1), num_bikes = rep(0,24))
+    df_place <- data.frame(station = seq(1,24,1), num_bikes = rep(1, 24))
   }
   
   #Loops through the simulated trips dataframe, moving a bike if one is available,
