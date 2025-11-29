@@ -23,47 +23,48 @@ optimize_placement <- function(arrival_rates,
                               tot_bikes, 
                               num_sims, 
                               testing = F, 
-                              day_sim_test,
+                              day_sim_test = NULL,
                               seed = NULL){
   
   #Adds functionality to input your own simulated day
   if(testing == F){
-  day_sim <- simulated_demand(arrival_rates, seed)
-  }
-  else{
+    day_sim <- simulated_demand(arrival_rates, seed)
+    
+  } else{
     day_sim <- day_sim_test
   }
   
   #create a baseline empty bike placement
   default_place <- data.frame(station = seq(1, 24, 1), num_bikes = rep(0, 24))
-  vec_most_unhappy <- c()
+  vec_most_unhappy <- integer(tot_bikes)
   
   for(i in 1:tot_bikes){
     
-    # Will create a dataframe that appends several simulated days together with
-    # the added happiness measure
-    output_df = data.frame()
+    # preallocate a list to store the simulation rather than rbind
+    output_list <- vector("list", num_sims)
     
     for(j in 1:num_sims){
-      if(testing == F){
-      day_sim <- simulated_demand(arrival_rates, seed)
+      sim_day <- if(testing == F) {
+        simulated_demand(arrival_rates, seed)
       } else {
-        day_sim <- day_sim_test
-      } 
+        day_sim_test
+      }
       
-      output_df <- rbind(output_df, happy_customers(day_sim, default_place)[[1]])
+      output_list[[j]] <- happy_customers(sim_day, default_place)[[1]]
     }
+  
+  # Combine all simulations at once (fast)
+  output_df <- bind_rows(output_list)
     
   #Finds the the unhappiest station unhappiness
   most_unhappy_station <- output_df %>% 
     group_by(start_station, hour) %>% 
     summarize(avg_happy = mean(mood), .groups = "drop") %>% 
     arrange(avg_happy, hour) %>% 
-    ungroup() %>% 
     slice(1) %>% 
     pull(start_station)
   
-  vec_most_unhappy <- c(vec_most_unhappy, most_unhappy_station)
+  vec_most_unhappy[i] <- most_unhappy_station
   
   #Adds a bike to the unhappiest station
   default_place[default_place$station == most_unhappy_station,]$num_bikes <- 
@@ -73,9 +74,11 @@ optimize_placement <- function(arrival_rates,
   
   }
   
-  return(list(default_place, output_df, vec_most_unhappy))
+  return(list(optimized_placement = default_place, succesful_trips = output_df, 
+              unhappiest_stations = vec_most_unhappy, number_sims = num_sims))
 }
 
 final_optimization <- optimize_placement(arrival_rates, 20, 2)
 
+final_rec(final_optimization)
 
