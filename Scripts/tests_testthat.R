@@ -101,11 +101,10 @@ testthat::expect_equal(sum(test_out[[1]]$num_bikes), 5)
 testthat::expect_equal(test_out[[3]], c(2, 2, 1, 3, 7))
 
 
+############################### Output Function TEST ###########################
 
-
-
-
-
+# Test that it is a gt table
+testthat::expect_s3_class(final_rec(test_out), "gt_tbl")
 
 
 

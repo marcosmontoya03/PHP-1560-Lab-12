@@ -14,10 +14,12 @@ final_rec <- function(final_optimization){
   
   final_rec <- final_optimization[[1]] %>% 
     filter(num_bikes > 0) %>% 
-    arrange(desc(num_bikes)) %>% 
+    arrange(station) %>% 
     gt() %>%
     tab_header(title = "Start each day with the following number of bikes
-               at each station to maximize customers' happiness") %>%
+               at each station to maximize customers' happiness",
+               subtitle = paste0("Fleet size: ",
+                                 sum(final_optimization[[1]]$num_bikes ))) %>%
     cols_label(station = "Station",
                num_bikes = "Number of Bikes")
 
