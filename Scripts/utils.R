@@ -20,25 +20,26 @@ final_rec <- function(final_optimization){
                at each station to maximize customers' happiness") %>%
     cols_label(station = "Station",
                num_bikes = "Number of Bikes")
+
   
   return(final_rec)
   
 }
 
 # 20 bikes 
-final_optimization_20 <- optimize_placement(arrival_rates, 20, 5, seed = 123)
+final_optimization_20 <- optimize_placement(arrival_rates, 20, 2, seed = 123)
 
 final_rec(final_optimization_20)
 
 # 50 bikes 
-final_optimization_50 <- optimize_placement(arrival_rates, 50, 5, seed = 123)
+final_optimization_50 <- optimize_placement(arrival_rates, 50, 2, seed = 123)
 
 final_rec(final_optimization_50)
 
 # 200 bikes 
 
-final_optimization_200 <- optimize_placement(arrival_rates, 200, 5, seed = 123)
-final_rec(final_optimization_200)
+final_optimization_200 <- optimize_placement(arrival_rates, 200, 2, seed = 123)
 
+final_rec(final_optimization_200)
 
 
