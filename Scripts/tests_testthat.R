@@ -1,8 +1,9 @@
 ############################### TESTS #####################################
 
-source("Scripts/estimation.R")
-source("Scripts/simulation.R")
-source("Scripts/optimization.R")
+# source("Scripts/estimation.R")
+# source("Scripts/placement.R")
+source("Scripts/utils.R")
+# source("Scripts/optimization.R")
 
 ########################### Estimation Function TEST ###########################
 test_bike_data <- data.frame(start_station = c("1","1","1","2","2","3"),

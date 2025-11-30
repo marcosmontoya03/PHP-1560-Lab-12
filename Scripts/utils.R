@@ -4,8 +4,8 @@ library(dplyr)
 library(tidyverse)
 library(gt)
 
-source("Scripts/estimation.R")
-source("Scripts/simulation.R")
+# source("Scripts/estimation.R")
+# source("Scripts/simulation.R")
 source("Scripts/placement.R")
 
 ############################### Output Function ################################
@@ -62,4 +62,36 @@ gt_200 <- final_rec(final_optimization_200)
 
 gtsave(gt_200, "results/final_rec_200_bikes.png")
 
+
+
+############## Testing with no seeds used #############
+# 20 bikes 
+final_optimization_20 <- optimize_placement(arrival_rates, 20, 2)
+
+gt_20 <- final_rec(final_optimization_20)
+
+gtsave(gt_20, "results/final_rec_20_bikes_no_seed.png")
+
+
+# 20 bikes 
+final_optimization_20 <- optimize_placement(arrival_rates, 20, 2)
+
+gt_20 <- final_rec(final_optimization_20)
+
+gtsave(gt_20, "results/final_rec_20_bikes_no_seed_2.png")
+
+# 50 bikes 
+final_optimization_50 <- optimize_placement(arrival_rates, 50, 2)
+
+gt_50 <- final_rec(final_optimization_50)
+
+gtsave(gt_50, "results/final_rec_50_bikes_no_seed.png")
+
+# 200 bikes 
+
+final_optimization_200 <- optimize_placement(arrival_rates, 200, 2)
+
+gt_200 <- final_rec(final_optimization_200)
+
+gtsave(gt_200, "results/final_rec_200_bikes_no_seed.png")
 
